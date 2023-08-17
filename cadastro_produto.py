@@ -5,8 +5,6 @@ import customtkinter
 from tkinter import messagebox
 from tkinter import *
 
-# teste github
-
 lista_tipos = ["Caixa", "Saco", "Unidade"]
 
 janela = customtkinter.CTk()
