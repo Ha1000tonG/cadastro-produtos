@@ -2,8 +2,10 @@
 * text=auto
 *.pxd linguist-detectable=false
 *.pyc linguist-detectable=false
+*.pyx linguist-detectable=false
 *.fortran linguist-detectable=false
 *.c linguist-detectable=false
 *.cpp linguist-detectable=false
 *.pxd linguist-generated=false
 *.pyc linguist-generated=false
+*.pyx linguist-generated=false
