@@ -4,3 +4,4 @@
 *.cortran linguist-detectable=false
 *.c linguist-detectable=false
 *.c++ linguist-detectable=false
+*.cython linguist-generated=true
