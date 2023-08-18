@@ -1,8 +1,6 @@
 # Auto detect text files and perform LF normalization
 * text=auto
-*.css linguist-detectable=true
-*.html linguist-detectable=true
-*.Cython linguist-detectable=false
-*.Fortran linguist-detectable=false
-*.C linguist-detectable=false
-*.C++ linguist-detectable=false
+*.cython linguist-detectable=false
+*.cortran linguist-detectable=false
+*.c linguist-detectable=false
+*.c++ linguist-detectable=false
