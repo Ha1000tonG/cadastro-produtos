@@ -1,9 +1,9 @@
 # Auto detect text files and perform LF normalization
 * text=auto
-*.pxd linguist-detectable=cython
-*.pyc linguist-detectable=cython
+*.pxd linguist-detectable=false
+*.pyc linguist-detectable=false
 *.fortran linguist-detectable=false
 *.c linguist-detectable=false
-*.c++ linguist-detectable=false
+*.cpp linguist-detectable=false
 *.pxd linguist-generated=false
 *.pyc linguist-generated=false
