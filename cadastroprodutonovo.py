@@ -81,12 +81,19 @@ def deletar_todos_produtos():
 
 # Função para exportar os dados para Excel
 def exportar_para_excel():
-    produtos = selecionar_produtos()
-    df_produtos = pd.DataFrame(
-        produtos, columns=["ID", "Descrição", "Quantidade", "Valor", "Tipo"]
-    )
-    df_produtos.to_excel("produtos.xlsx", index=False)
-    messagebox.showinfo("Exportar para Excel", "Exportação realizada com sucesso!")
+    try:
+        produtos = selecionar_produtos()
+        # Remover a última coluna (extra) de cada registro
+        produtos_sem_extra = [produto[:-1] for produto in produtos]
+
+        df_produtos = pd.DataFrame(
+            produtos_sem_extra,
+            columns=["ID", "Descrição", "Quantidade", "Valor", "Tipo"],
+        )
+        df_produtos.to_excel("produtos.xlsx", index=False)
+        messagebox.showinfo("Exportar para Excel", "Exportação realizada com sucesso!")
+    except Exception as e:
+        messagebox.showerror("Erro", f"Erro ao exportar: {e}")
 
 
 # Função para validar o formulário de cadastro
@@ -158,15 +165,31 @@ def limpar_campos():
 # Função para deletar produto via interface
 def deletar():
     try:
-        item_selecionado = tree.selection()[0]
-        produto_id = tree.item(item_selecionado, "values")[
-            0
-        ]  # ID está oculto, mas ainda é necessário
-        deletar_produto(produto_id)
-        messagebox.showinfo("Sucesso", "Produto deletado com sucesso")
-        mostrar_produtos()
+        item_selecionado = tree.selection()[0]  # Pega o iid do item selecionado
+        print(f"Item selecionado: {item_selecionado}")  # Verifica o item selecionado
+
+        # O ID do produto está armazenado na propriedade "iid"
+        produto_id = (
+            item_selecionado  # Mudei aqui para usar o item selecionado diretamente
+        )
+        print(f"Produto ID (iid): {produto_id}")  # Verifica se o iid está correto
+
+        # Confirmação antes de deletar
+        resposta = messagebox.askyesno(
+            "Confirmação",
+            f"Tem certeza que deseja deletar o produto com ID {produto_id}?",
+        )
+        if resposta:
+            deletar_produto(int(produto_id))  # Converte o ID para inteiro
+            messagebox.showinfo("Sucesso", "Produto deletado com sucesso")
+            mostrar_produtos()  # Atualiza a visualização do Treeview
+
     except IndexError:
         messagebox.showerror("Erro", "Selecione um produto para deletar")
+    except ValueError:
+        messagebox.showerror("Erro", "O ID do produto deve ser um número inteiro.")
+    except Exception as e:
+        messagebox.showerror("Erro", f"Erro inesperado ao deletar produto: {e}")
 
 
 # Função para mostrar os produtos no Treeview, ocultando o ID
@@ -217,10 +240,19 @@ def mostrar_produtos():
     tree.column("Valor", width=100, anchor="center")
     tree.column("Tipo", width=150, anchor="center")
 
+    # Limpa os itens anteriores
+    for item in tree.get_children():
+        tree.delete(item)
+
     # Insere os dados no Treeview, sem o ID
     for produto in lista_produtos:
         # produto[1] = descrição, produto[2] = quantidade, produto[3] = valor, produto[4] = tipo
-        tree.insert("", "end", values=(produto[1], produto[2], produto[3], produto[4]))
+        tree.insert(
+            "",
+            "end",
+            iid=produto[0],
+            values=(produto[1], produto[2], produto[3], produto[4]),
+        )
 
     # Scrollbar vertical
     vsb = customtkinter.CTkScrollbar(
@@ -282,12 +314,17 @@ customtkinter.CTkButton(
 ).grid(row=4, column=0, columnspan=2, padx=10, pady=10)
 customtkinter.CTkButton(
     frameBaixo, text="Exportar para Excel", command=exportar_para_excel
-).grid(row=5, column=0, columnspan=2, padx=10, pady=10)
+).grid(row=6, column=0, columnspan=2, padx=10, pady=10)
 customtkinter.CTkButton(frameBaixo, text="Deletar Produto", command=deletar).grid(
-    row=6, column=0, columnspan=2, padx=10, pady=10
+    row=5, column=0, columnspan=2, padx=10, pady=10
 )
 customtkinter.CTkButton(
-    frameBaixo, text="Deletar Todos", command=deletar_todos_produtos, fg_color="red"
+    frameBaixo,
+    text="Deletar Todos",
+    command=deletar_todos_produtos,
+    fg_color="#FF6600",
+    width=100,
+    text_color="white",
 ).grid(row=7, column=0, columnspan=2, padx=10, pady=10)
 
 # Inicializar o banco de dados e carregar os produtos na interface
