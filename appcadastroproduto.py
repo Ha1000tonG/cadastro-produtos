@@ -115,43 +115,38 @@ def validar_campos():
 
 # Função para cadastrar produto via interface
 def cadastrar_produtos():
-    if entry_descricao.get() == "":
-        messagebox.showerror("Erro", "Preencher o campo Descrição")
-    elif entry_quantidade.get() == "":
-        messagebox.showerror("Erro", "Preencher o campo Quantidade")
-    elif entry_valor.get() == "":
-        messagebox.showerror("Erro", "Preencher o campo Valor")
-    elif combobox_tipo.get() == "":
-        messagebox.showerror("Erro", "Preencher o campo Tipo Unidade")
-    else:
-        # Conectar ao banco de dados
-        conexao = sqlite3.connect("produtos.db")
-        c = conexao.cursor()
+    # Verifica se os campos estão válidos antes de prosseguir
+    if not validar_campos():
+        return  # Interrompe a execução se a validação falhar
 
-        # Inserir dados no banco
-        c.execute(
-            "INSERT INTO produtos (descricao, quantidade, valor, tipo) VALUES (?, ?, ?, ?)",
-            (
-                entry_descricao.get(),
-                entry_quantidade.get(),
-                entry_valor.get(),
-                combobox_tipo.get(),
-            ),
-        )
+    # Conectar ao banco de dados
+    conexao = sqlite3.connect("produtos.db")
+    c = conexao.cursor()
 
-        conexao.commit()
-        conexao.close()
+    # Inserir dados no banco
+    c.execute(
+        "INSERT INTO produtos (descricao, quantidade, valor, tipo) VALUES (?, ?, ?, ?)",
+        (
+            entry_descricao.get(),
+            entry_quantidade.get(),
+            entry_valor.get(),
+            combobox_tipo.get(),
+        ),
+    )
 
-        # Exibir mensagem de sucesso
-        messagebox.showinfo("Cadastro de Produtos", "Cadastro realizado com sucesso!")
+    conexao.commit()
+    conexao.close()
 
-        # Limpar os campos de entrada
-        entry_descricao.delete(0, "end")
-        entry_quantidade.delete(0, "end")
-        entry_valor.delete(0, "end")
+    # Exibir mensagem de sucesso
+    messagebox.showinfo("Cadastro de Produtos", "Cadastro realizado com sucesso!")
 
-        # Atualizar o Treeview
-        mostrar_produtos()
+    # Limpar os campos de entrada
+    entry_descricao.delete(0, "end")
+    entry_quantidade.delete(0, "end")
+    entry_valor.delete(0, "end")
+
+    # Atualizar o Treeview
+    mostrar_produtos()
 
 
 # Função para limpar os campos do formulário
@@ -280,9 +275,9 @@ janela.resizable(False, False)
 
 frameBaixo = customtkinter.CTkFrame(janela, width=410, height=303)
 frameBaixo.grid(row=0, column=0, pady=1, padx=1, sticky=NSEW)
-
 frameDireita = customtkinter.CTkFrame(janela, width=588, height=303)
 frameDireita.grid(row=0, column=1, pady=3, padx=1, sticky=NSEW)
+
 
 # Labels e inputs
 customtkinter.CTkLabel(frameBaixo, text="Descrição:").grid(
