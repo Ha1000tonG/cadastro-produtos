@@ -5,6 +5,12 @@ import customtkinter
 from tkinter import messagebox
 from tkinter import *
 
+# Importa as funções
+from edicao_produto import (
+    preencher_campos_para_edicao,
+    salvar_edicao,
+)
+
 
 # Função para conectar ao banco de dados
 def conectar_bd():
@@ -270,7 +276,7 @@ def mostrar_produtos():
 # Interface gráfica
 janela = customtkinter.CTk()
 janela.title("Cadastro de Produtos")
-janela.geometry("780x390")
+janela.geometry("780x340")
 janela.resizable(False, False)
 
 frameBaixo = customtkinter.CTkFrame(janela, width=410, height=303)
@@ -304,23 +310,64 @@ combobox_tipo = customtkinter.CTkComboBox(frameBaixo, values=lista_tipos, width=
 combobox_tipo.grid(row=3, column=1)
 
 # Botões
+
+# Botão para Cadastrar produtos
 customtkinter.CTkButton(
     frameBaixo, text="Cadastrar Produto", command=cadastrar_produtos
-).grid(row=4, column=0, columnspan=2, padx=10, pady=10)
+).grid(row=4, column=0, columnspan=2, padx=10, pady=10, sticky="w")
+
+# Botão "Deletar Produto" para Deletar o Produto selecionado no grid
+customtkinter.CTkButton(frameBaixo, text="Deletar Produto", command=deletar).grid(
+    row=4, column=0, columnspan=2, padx=10, pady=10, sticky="e"
+)
+
+# Botão "Exportar para Excel" para salvar os produtos numa planilha em Excel
 customtkinter.CTkButton(
     frameBaixo, text="Exportar para Excel", command=exportar_para_excel
-).grid(row=6, column=0, columnspan=2, padx=10, pady=10)
-customtkinter.CTkButton(frameBaixo, text="Deletar Produto", command=deletar).grid(
-    row=5, column=0, columnspan=2, padx=10, pady=10
-)
+).grid(row=5, column=0, columnspan=2, padx=10, pady=10, sticky="w")
+
+# Botão "Deletar Todos" que deleta todos os produtos do grid
 customtkinter.CTkButton(
     frameBaixo,
-    text="Deletar Todos",
+    text="Deletar Todos Produtos",
     command=deletar_todos_produtos,
     fg_color="#FF6600",
-    width=100,
     text_color="white",
-).grid(row=7, column=0, columnspan=2, padx=10, pady=10)
+    font=("Arial", 12),
+).grid(row=5, column=0, columnspan=2, padx=10, pady=10, sticky="e")
+
+# Botão "Editar Produto" que chama a função do arquivo externo
+customtkinter.CTkButton(
+    frameBaixo,
+    text="Editar Produto",
+    command=lambda: preencher_campos_para_edicao(
+        tree,
+        entry_descricao,
+        entry_quantidade,
+        entry_valor,
+        combobox_tipo,
+        btn_salvar_edicao,
+    ),
+).grid(row=6, column=0, columnspan=2, padx=10, pady=10, sticky="W")
+
+# Botão para salvar a edição, que chama a função do arquivo externo
+btn_salvar_edicao = customtkinter.CTkButton(
+    frameBaixo,
+    text="Salvar Edição",
+    command=lambda: salvar_edicao(
+        tree,
+        entry_descricao,
+        entry_quantidade,
+        entry_valor,
+        combobox_tipo,
+        btn_salvar_edicao,
+        validar_campos,
+        mostrar_produtos,
+    ),
+    state=DISABLED,
+)
+btn_salvar_edicao.grid(row=6, column=0, columnspan=2, padx=10, pady=10, sticky="e")
+
 
 # Inicializar o banco de dados e carregar os produtos na interface
 criar_tabela()
